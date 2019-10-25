@@ -1,3 +1,6 @@
+#database usernames and passwords
+secrets.py
+
 #Virtual Environment
 venv/
 
