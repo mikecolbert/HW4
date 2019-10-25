@@ -3,7 +3,19 @@
 {% extends 'base.html' %}
 
 {% block body %}
-<p><a href="{{ url_for('.add_friend')}}"> Add a new friend</a>
+<p><a href="{{ url_for('.add_friend')}}"> Add a new friend</a></p>
+{% with messages = get_flashed_messages() %}
+{% if messages %}
+<div id='flash'>
+  {% for message in messages %}
+  <strong>Alert!</strong> {{ message }}
+  <button type="close" value="x">
+  </button>
+  {% endfor %}
+  {% endif %}
+  {% endwith %}
+</div>
+
 {% if friends %}
     <table>
         <thead>
@@ -20,6 +32,17 @@
                 <td> {{ row.friendid }}</td>
                 <td> {{ row.first_name }}</td>
                 <td> {{ row.last_name }}</td>
+
+                    <td>
+          <form action="/edit/{{ row.friendid }}" method="POST">
+            <input type="submit" value="Update" class="btn btn-info" />
+          </form>
+        </td>
+        <td>
+          <form action="/delete_friend/{{ row.friendid }}" method="POST">
+            <input type="submit" value="Delete" class="btn btn-danger" />
+          </form>
+        </td>
             </tr>
             {% endfor %}
         </tbody>
