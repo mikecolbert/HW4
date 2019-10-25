@@ -4,6 +4,12 @@
   <head>
     <meta charset="utf-8">
     <title>{{ pageTitle }}</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+<style>
+#flash { display:none; background-color:white; color:red}
+</style>
+
 <script>
     $(function() {
    $('#flash').delay(500).fadeIn('normal', function() {
@@ -11,9 +17,7 @@
    });
 });
 </script>
-<style>
-#flash { display:none; background-color:#000; color:#fff}
-</style>
+
 </head>
 
   <body>
