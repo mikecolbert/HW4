@@ -7,10 +7,10 @@ from flask_sqlalchemy import SQLAlchemy
 import pymysql
 import secrets
 
-dbUser = os.environ.get(dbuser)
-dbPass = os.environ.get(dbpass)
-dbHost = os.environ.get(dbhost)
-dbName = os.environ.get(dbName)
+dbUser = os.environ.get('dbuser')
+dbPass = os.environ.get('dbpass')
+dbHost = os.environ.get('dbhost')
+dbName = os.environ.get('dbName')
 
 #conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(secrets.dbuser, secrets.dbpass, secrets.dbhost, secrets.dbname)
 conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(dbUser, dbPass, dbHost, dbName)
