@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 {% block body %}
 <div>
-
+<p><a href="{{ url_for('index')}}"> Home </a></p>
   <h3>{{ legend }}</h3>
 
   {% with messages = get_flashed_messages() %}
@@ -18,17 +18,20 @@
    </div>
 
 
-
-
-  <form method="POST" action="">
+{% if form %}
+  <form method="POST">
 
     {{ form.csrf_token }}
-    {{ form.first_name.label }} {{ form.first_name(size=20) }}
-    {{ form.last_name.label }} {{ form.last_name(size=20) }}
 
-    <input type="submit" value="Save">
+    {{ form.first_name.label }} {{ form.first_name }}
+    {{ form.last_name.label }} {{ form.last_name }}
+
+    <input type="submit" formaction="{{url_for('update_friend', friend_id=form.friendid)}}" value="Update">
+    <input type="submit" formaction="{{url_for('delete_friend', friend_id=form.friendid)}}" value="Delete">
+
+
 
   </form>
-
+{% endif %}
 </div>
 {% endblock %}

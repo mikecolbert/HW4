@@ -1,5 +1,5 @@
 from flask import Flask
-from flask import render_template, redirect, request, flash
+from flask import render_template, redirect, request, flash, url_for
 from flask_wtf import FlaskForm
 from wtforms import StringField
 from wtforms.validators import DataRequired
@@ -7,7 +7,14 @@ from flask_sqlalchemy import SQLAlchemy
 import pymysql
 import secrets
 
-conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(secrets.dbuser, secrets.dbpass, secrets.dbhost, secrets.dbname)
+dbUser = os.environ.get(dbuser)
+dbPass = os.environ.get(dbpass)
+dbHost = os.environ.get(dbhost)
+dbName = os.environ.get(dbName)
+
+#conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(secrets.dbuser, secrets.dbpass, secrets.dbhost, secrets.dbname)
+conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(dbUser, dbPass, dbHost, dbName)
+
 
 app = Flask(__name__)
 app.config['SECRET_KEY']='SuperSecretKey'
@@ -17,6 +24,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False # silence the deprecation w
 db = SQLAlchemy(app)
 
 class colbert_friends(db.Model):
+    #__tablename__ = 'results'
     friendid = db.Column(db.Integer, primary_key=True)
     first_name = db.Column(db.String(255))
     last_name = db.Column(db.String(255))
@@ -34,7 +42,7 @@ def index():
     all_friends = colbert_friends.query.all()
     return render_template('index.html', friends=all_friends, pageTitle='Mike\'s Friends')
 
-@app.route('/add_friend', methods=['GET', 'POST'])
+@app.route('/friend/new', methods=['GET', 'POST'])
 def add_friend():
     form = FriendForm()
     if form.validate_on_submit():
@@ -43,24 +51,41 @@ def add_friend():
         db.session.commit()
         return redirect('/')
 
-    return render_template('add_friend.html', form=form, pageTitle='Add A New Friend')
+    return render_template('add_friend.html', form=form, pageTitle='Add A New Friend',
+                            legend="Add A New Friend")
 
-@app.route('/delete_friend/<int:friendid>', methods=['GET','POST'])
-def delete_friend(friendid):
+
+@app.route('/friend/<int:friend_id>', methods=['GET','POST'])
+def friend(friend_id):
+    friend = colbert_friends.query.get_or_404(friend_id)
+    return render_template('friend.html', form=friend, pageTitle='Friend Details')
+
+@app.route('/friend/<int:friend_id>/update', methods=['GET','POST'])
+def update_friend(friend_id):
+    friend = colbert_friends.query.get_or_404(friend_id)
+    form = FriendForm()
+    if form.validate_on_submit():
+        friend.first_name = form.first_name.data
+        friend.last_name = form.last_name.data
+        db.session.commit()
+        flash('Your friend has been updated.')
+        return redirect(url_for('friend', friend_id=friend.friendid))
+    #elif request.method == 'GET':
+    form.first_name.data = friend.first_name
+    form.last_name.data = friend.last_name
+    return render_template('add_friend.html', form=form, pageTitle='Update Post',
+                            legend="Update A Friend")
+
+@app.route('/friend/<int:friend_id>/delete', methods=['POST'])
+def delete_friend(friend_id):
     if request.method == 'POST': #if it's a POST request, delete the friend from the database
-        obj = colbert_friends.query.filter_by(friendid=friendid).first()
-        db.session.delete(obj)
+        friend = colbert_friends.query.get_or_404(friend_id)
+        db.session.delete(friend)
         db.session.commit()
         flash('Friend was successfully deleted!')
         return redirect("/")
-
     else: #if it's a GET request, send them to the home page
         return redirect("/")
-
-
-
-
-
 
 
 if __name__ == '__main__':
