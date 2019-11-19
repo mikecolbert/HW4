@@ -7,6 +7,7 @@
   <form method="POST" action="">
 
     {{ form.csrf_token }}
+    {{ form.friendid.label }} {{ form.friendid(size=5, readonly=true)}}
     {{ form.first_name.label }} {{ form.first_name(size=20) }}
     {{ form.last_name.label }} {{ form.last_name(size=20) }}
 
