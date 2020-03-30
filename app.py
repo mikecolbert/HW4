@@ -17,7 +17,7 @@ import secrets
 conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(secrets.dbuser, secrets.dbpass, secrets.dbhost, secrets.dbname)
 #conn = "mysql+pymysql://{0}:{1}@{2}/{3}".format(dbuser, dbpass, dbhost, dbname)
 
-
+#mwc
 
 app = Flask(__name__)
 app.config['SECRET_KEY']='SuperSecretKey'
